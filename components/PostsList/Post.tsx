@@ -29,12 +29,13 @@ export const Post = ({
               <Image
                 src={thumbnail.src}
                 layout="fill"
-                className={`object-cover object-center w-full h-full group-hover:scale-105 transition-all duration-300`}
+                className={`object-cover object-center w-full h-full group-hover:scale-105 transition-[transform] duration-300`}
               />
             </figure>
             <header className="flex flex-col gap-3 p-6">
-              <div className="flex gap-4 text-sm">
+              <div className="flex items-center gap-4 text-sm text-slate-700">
                 <span>Kategoria</span>
+                <span className="w-1 h-1 bg-slate-700 rounded-full"></span>
                 <time datetime={publicationDate}>04 wrzesień 2022</time>
               </div>
               <h3 className="font-bold text-lg">{title}</h3>
