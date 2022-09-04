@@ -36,7 +36,7 @@ export const Post = ({
               <div className="flex items-center gap-4 text-sm text-slate-700">
                 <span>Kategoria</span>
                 <span className="w-1 h-1 bg-slate-700 rounded-full"></span>
-                <time datetime={publicationDate}>04 wrzesień 2022</time>
+                <time dateTime={publicationDate}>04 wrzesień 2022</time>
               </div>
               <h3 className="font-bold text-lg">{title}</h3>
             </header>
