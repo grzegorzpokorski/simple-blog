@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Section } from "../../components/Section";
 import { Header } from "../../components/Header";
 import { Layout } from "../../components/Layout";
@@ -8,14 +9,34 @@ import {
   GetArticlesDocument,
   GetArticlesQuery,
   ArticleFragment,
+  GetCategoriesDocument,
+  GetCategoriesQuery,
 } from "../../generated/graphql";
 
-const Blog = ({ articles }: { articles: ArticleFragment[] }) => {
+type BlogProps = {
+  articles: ArticleFragment[];
+  categories: { name: string; slug: string }[];
+};
+
+const Blog = ({ articles, categories }: BlogProps) => {
   return (
     <Layout>
       <main>
         <Section>
-          <Header title="Blog" titleAs="h1" />
+          <Header title="Blog" titleAs="h1" withPaddingBelow />
+
+          <ul className="flex flex-row justify-center flex-wrap gap-4">
+            {categories &&
+              categories.map((category) => (
+                <li>
+                  <Link href={`/kategoria/${category.slug}`}>
+                    <a className="flex-inline text-slate-800 bg-slate-300 hover:bg-slate-400 px-4 py-2">
+                      {category.name}
+                    </a>
+                  </Link>
+                </li>
+              ))}
+          </ul>
           <ArticlesList articles={articles} />
         </Section>
       </main>
@@ -26,15 +47,22 @@ const Blog = ({ articles }: { articles: ArticleFragment[] }) => {
 export default Blog;
 
 export const getStaticProps = async () => {
-  const result: GetArticlesQuery = (
+  const articlesResult: GetArticlesQuery = (
     await client.query({
       query: GetArticlesDocument,
     })
   ).data;
 
+  const categoriesResult: GetCategoriesQuery = (
+    await client.query({
+      query: GetCategoriesDocument,
+    })
+  ).data;
+
   return {
     props: {
-      articles: result.articles,
+      articles: articlesResult.articles,
+      categories: categoriesResult.categories,
     },
   };
 };
