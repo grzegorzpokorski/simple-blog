@@ -1,0 +1,18 @@
+query getArticleBySlug($slug: String) {
+  article(where: { slug: $slug }) {
+    slug
+    title
+    category {
+      ...category
+    }
+    createdAt
+    content {
+      html
+    }
+  }
+}
+
+fragment category on Category {
+  name
+  slug
+}

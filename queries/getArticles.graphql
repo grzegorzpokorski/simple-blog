@@ -1,0 +1,26 @@
+query getArticles {
+  articles(orderBy: createdAt_ASC) {
+    id
+    slug
+    title
+    thumbnail {
+      ...image
+    }
+    updatedAt
+    createdAt
+    category {
+      ...category
+    }
+  }
+}
+
+fragment image on Asset {
+  height
+  width
+  url
+}
+
+fragment category on Category {
+  name
+  slug
+}

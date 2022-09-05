@@ -1,0 +1,5 @@
+query getArticlesPaths {
+  articles(stage: PUBLISHED) {
+    slug
+  }
+}

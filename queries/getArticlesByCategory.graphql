@@ -1,0 +1,27 @@
+query getArticlesByCategorySlug($slug: String) {
+  articles(where: { category: { slug: $slug } }) {
+    id
+    slug
+    title
+    thumbnail {
+      ...image
+    }
+    createdAt
+    updatedAt
+    category {
+      ...category
+    }
+    createdAt
+  }
+}
+
+fragment image on Asset {
+  height
+  width
+  url
+}
+
+fragment category on Category {
+  name
+  slug
+}
