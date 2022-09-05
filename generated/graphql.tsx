@@ -4207,7 +4207,7 @@ export type GetArticleBySlugLazyQueryHookResult = ReturnType<typeof useGetArticl
 export type GetArticleBySlugQueryResult = Apollo.QueryResult<GetArticleBySlugQuery, GetArticleBySlugQueryVariables>;
 export const GetArticlesDocument = gql`
     query getArticles {
-  articles(orderBy: createdAt_ASC) {
+  articles(orderBy: createdAt_DESC) {
     ...article
   }
 }
