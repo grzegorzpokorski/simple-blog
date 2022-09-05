@@ -1,18 +1,24 @@
 query getArticleBySlug($slug: String) {
   article(where: { slug: $slug }) {
-    slug
-    title
-    category {
-      ...category
-    }
-    createdAt
-    content {
-      html
-    }
+    ...singleArticle
   }
 }
 
-fragment category on Category {
-  name
+fragment singleArticle on Article {
   slug
+  title
+  thumbnail {
+    height
+    width
+    url
+  }
+  updatedAt
+  createdAt
+  category {
+    name
+    slug
+  }
+  content {
+    html
+  }
 }

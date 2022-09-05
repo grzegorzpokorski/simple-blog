@@ -1,5 +1,8 @@
-query getArticles {
-  articles(orderBy: createdAt_ASC) {
+query getArticlesByCategorySlug($categorySlug: String) {
+  articles(
+    where: { category: { slug: $categorySlug } }
+    orderBy: createdAt_DESC
+  ) {
     ...article
   }
 }

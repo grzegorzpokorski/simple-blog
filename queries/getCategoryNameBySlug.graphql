@@ -1,0 +1,5 @@
+query getCategoryNameBySlug($categorySlug: String) {
+  category(where: { slug: $categorySlug }) {
+    name
+  }
+}

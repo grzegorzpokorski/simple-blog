@@ -1,5 +1,0 @@
-query getCategoriesPaths {
-  categories(stage: PUBLISHED) {
-    slug
-  }
-}
