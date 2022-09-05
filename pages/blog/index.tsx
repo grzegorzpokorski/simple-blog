@@ -28,7 +28,7 @@ const Blog = ({ articles, categories }: BlogProps) => {
           <ul className="flex flex-row justify-center flex-wrap gap-4">
             {categories &&
               categories.map((category) => (
-                <li>
+                <li key={category.slug}>
                   <Link href={`/kategoria/${category.slug}`}>
                     <a className="flex-inline text-slate-800 bg-slate-300 hover:bg-slate-400 px-4 py-2">
                       {category.name}
