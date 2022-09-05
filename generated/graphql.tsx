@@ -4083,43 +4083,63 @@ export type GetArticleBySlugQueryVariables = Exact<{
 }>;
 
 
-export type GetArticleBySlugQuery = { __typename?: 'Query', article?: { __typename?: 'Article', slug?: string | null, title: string, createdAt: any, category?: { __typename?: 'Category', name: string, slug: string } | null, content?: { __typename?: 'RichText', html: string } | null } | null };
+export type GetArticleBySlugQuery = { __typename?: 'Query', article?: { __typename?: 'Article', slug?: string | null, title: string, updatedAt: any, createdAt: any, thumbnail: { __typename?: 'Asset', height?: number | null, width?: number | null, url: string }, category?: { __typename?: 'Category', name: string, slug: string } | null, content?: { __typename?: 'RichText', html: string } | null } | null };
 
-export type CategoryFragment = { __typename?: 'Category', name: string, slug: string };
+export type SingleArticleFragment = { __typename?: 'Article', slug?: string | null, title: string, updatedAt: any, createdAt: any, thumbnail: { __typename?: 'Asset', height?: number | null, width?: number | null, url: string }, category?: { __typename?: 'Category', name: string, slug: string } | null, content?: { __typename?: 'RichText', html: string } | null };
 
 export type GetArticlesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetArticlesQuery = { __typename?: 'Query', articles: Array<{ __typename?: 'Article', id: string, slug?: string | null, title: string, updatedAt: any, createdAt: any, thumbnail: { __typename?: 'Asset', height?: number | null, width?: number | null, url: string }, category?: { __typename?: 'Category', name: string, slug: string } | null }> };
+export type GetArticlesQuery = { __typename?: 'Query', articles: Array<{ __typename?: 'Article', slug?: string | null, title: string, updatedAt: any, createdAt: any, thumbnail: { __typename?: 'Asset', height?: number | null, width?: number | null, url: string }, category?: { __typename?: 'Category', name: string, slug: string } | null }> };
+
+export type ArticleFragment = { __typename?: 'Article', slug?: string | null, title: string, updatedAt: any, createdAt: any, thumbnail: { __typename?: 'Asset', height?: number | null, width?: number | null, url: string }, category?: { __typename?: 'Category', name: string, slug: string } | null };
 
 export type ImageFragment = { __typename?: 'Asset', height?: number | null, width?: number | null, url: string };
 
+export type CategoryFragment = { __typename?: 'Category', name: string, slug: string };
+
 export type GetArticlesByCategorySlugQueryVariables = Exact<{
-  slug?: InputMaybe<Scalars['String']>;
+  categorySlug?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type GetArticlesByCategorySlugQuery = { __typename?: 'Query', articles: Array<{ __typename?: 'Article', id: string, slug?: string | null, title: string, createdAt: any, updatedAt: any, thumbnail: { __typename?: 'Asset', height?: number | null, width?: number | null, url: string }, category?: { __typename?: 'Category', name: string, slug: string } | null }> };
+export type GetArticlesByCategorySlugQuery = { __typename?: 'Query', articles: Array<{ __typename?: 'Article', slug?: string | null, title: string, updatedAt: any, createdAt: any, thumbnail: { __typename?: 'Asset', height?: number | null, width?: number | null, url: string }, category?: { __typename?: 'Category', name: string, slug: string } | null }> };
 
-export type GetArticlesPathsQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type GetArticlesPathsQuery = { __typename?: 'Query', articles: Array<{ __typename?: 'Article', slug?: string | null }> };
-
-export type GetCategoriesQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetArticlesSlugsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCategoriesQuery = { __typename?: 'Query', categories: Array<{ __typename?: 'Category', name: string, slug: string }> };
+export type GetArticlesSlugsQuery = { __typename?: 'Query', articles: Array<{ __typename?: 'Article', slug?: string | null }> };
 
-export type GetCategoriesPathsQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetCategoriesSlugsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCategoriesPathsQuery = { __typename?: 'Query', categories: Array<{ __typename?: 'Category', slug: string }> };
+export type GetCategoriesSlugsQuery = { __typename?: 'Query', categories: Array<{ __typename?: 'Category', slug: string }> };
 
-export const CategoryFragmentDoc = gql`
-    fragment category on Category {
-  name
+export type GetCategoryNameBySlugQueryVariables = Exact<{
+  categorySlug?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type GetCategoryNameBySlugQuery = { __typename?: 'Query', category?: { __typename?: 'Category', name: string } | null };
+
+export const SingleArticleFragmentDoc = gql`
+    fragment singleArticle on Article {
   slug
+  title
+  thumbnail {
+    height
+    width
+    url
+  }
+  updatedAt
+  createdAt
+  category {
+    name
+    slug
+  }
+  content {
+    html
+  }
 }
     `;
 export const ImageFragmentDoc = gql`
@@ -4129,21 +4149,34 @@ export const ImageFragmentDoc = gql`
   url
 }
     `;
+export const CategoryFragmentDoc = gql`
+    fragment category on Category {
+  name
+  slug
+}
+    `;
+export const ArticleFragmentDoc = gql`
+    fragment article on Article {
+  slug
+  title
+  thumbnail {
+    ...image
+  }
+  updatedAt
+  createdAt
+  category {
+    ...category
+  }
+}
+    ${ImageFragmentDoc}
+${CategoryFragmentDoc}`;
 export const GetArticleBySlugDocument = gql`
     query getArticleBySlug($slug: String) {
   article(where: {slug: $slug}) {
-    slug
-    title
-    category {
-      ...category
-    }
-    createdAt
-    content {
-      html
-    }
+    ...singleArticle
   }
 }
-    ${CategoryFragmentDoc}`;
+    ${SingleArticleFragmentDoc}`;
 
 /**
  * __useGetArticleBySlugQuery__
@@ -4175,21 +4208,10 @@ export type GetArticleBySlugQueryResult = Apollo.QueryResult<GetArticleBySlugQue
 export const GetArticlesDocument = gql`
     query getArticles {
   articles(orderBy: createdAt_ASC) {
-    id
-    slug
-    title
-    thumbnail {
-      ...image
-    }
-    updatedAt
-    createdAt
-    category {
-      ...category
-    }
+    ...article
   }
 }
-    ${ImageFragmentDoc}
-${CategoryFragmentDoc}`;
+    ${ArticleFragmentDoc}`;
 
 /**
  * __useGetArticlesQuery__
@@ -4218,24 +4240,12 @@ export type GetArticlesQueryHookResult = ReturnType<typeof useGetArticlesQuery>;
 export type GetArticlesLazyQueryHookResult = ReturnType<typeof useGetArticlesLazyQuery>;
 export type GetArticlesQueryResult = Apollo.QueryResult<GetArticlesQuery, GetArticlesQueryVariables>;
 export const GetArticlesByCategorySlugDocument = gql`
-    query getArticlesByCategorySlug($slug: String) {
-  articles(where: {category: {slug: $slug}}) {
-    id
-    slug
-    title
-    thumbnail {
-      ...image
-    }
-    createdAt
-    updatedAt
-    category {
-      ...category
-    }
-    createdAt
+    query getArticlesByCategorySlug($categorySlug: String) {
+  articles(where: {category: {slug: $categorySlug}}, orderBy: createdAt_DESC) {
+    ...article
   }
 }
-    ${ImageFragmentDoc}
-${CategoryFragmentDoc}`;
+    ${ArticleFragmentDoc}`;
 
 /**
  * __useGetArticlesByCategorySlugQuery__
@@ -4249,7 +4259,7 @@ ${CategoryFragmentDoc}`;
  * @example
  * const { data, loading, error } = useGetArticlesByCategorySlugQuery({
  *   variables: {
- *      slug: // value for 'slug'
+ *      categorySlug: // value for 'categorySlug'
  *   },
  * });
  */
@@ -4264,106 +4274,106 @@ export function useGetArticlesByCategorySlugLazyQuery(baseOptions?: Apollo.LazyQ
 export type GetArticlesByCategorySlugQueryHookResult = ReturnType<typeof useGetArticlesByCategorySlugQuery>;
 export type GetArticlesByCategorySlugLazyQueryHookResult = ReturnType<typeof useGetArticlesByCategorySlugLazyQuery>;
 export type GetArticlesByCategorySlugQueryResult = Apollo.QueryResult<GetArticlesByCategorySlugQuery, GetArticlesByCategorySlugQueryVariables>;
-export const GetArticlesPathsDocument = gql`
-    query getArticlesPaths {
-  articles(stage: PUBLISHED) {
+export const GetArticlesSlugsDocument = gql`
+    query getArticlesSlugs {
+  articles {
     slug
   }
 }
     `;
 
 /**
- * __useGetArticlesPathsQuery__
+ * __useGetArticlesSlugsQuery__
  *
- * To run a query within a React component, call `useGetArticlesPathsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetArticlesPathsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetArticlesSlugsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetArticlesSlugsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetArticlesPathsQuery({
+ * const { data, loading, error } = useGetArticlesSlugsQuery({
  *   variables: {
  *   },
  * });
  */
-export function useGetArticlesPathsQuery(baseOptions?: Apollo.QueryHookOptions<GetArticlesPathsQuery, GetArticlesPathsQueryVariables>) {
+export function useGetArticlesSlugsQuery(baseOptions?: Apollo.QueryHookOptions<GetArticlesSlugsQuery, GetArticlesSlugsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetArticlesPathsQuery, GetArticlesPathsQueryVariables>(GetArticlesPathsDocument, options);
+        return Apollo.useQuery<GetArticlesSlugsQuery, GetArticlesSlugsQueryVariables>(GetArticlesSlugsDocument, options);
       }
-export function useGetArticlesPathsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetArticlesPathsQuery, GetArticlesPathsQueryVariables>) {
+export function useGetArticlesSlugsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetArticlesSlugsQuery, GetArticlesSlugsQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetArticlesPathsQuery, GetArticlesPathsQueryVariables>(GetArticlesPathsDocument, options);
+          return Apollo.useLazyQuery<GetArticlesSlugsQuery, GetArticlesSlugsQueryVariables>(GetArticlesSlugsDocument, options);
         }
-export type GetArticlesPathsQueryHookResult = ReturnType<typeof useGetArticlesPathsQuery>;
-export type GetArticlesPathsLazyQueryHookResult = ReturnType<typeof useGetArticlesPathsLazyQuery>;
-export type GetArticlesPathsQueryResult = Apollo.QueryResult<GetArticlesPathsQuery, GetArticlesPathsQueryVariables>;
-export const GetCategoriesDocument = gql`
-    query getCategories {
+export type GetArticlesSlugsQueryHookResult = ReturnType<typeof useGetArticlesSlugsQuery>;
+export type GetArticlesSlugsLazyQueryHookResult = ReturnType<typeof useGetArticlesSlugsLazyQuery>;
+export type GetArticlesSlugsQueryResult = Apollo.QueryResult<GetArticlesSlugsQuery, GetArticlesSlugsQueryVariables>;
+export const GetCategoriesSlugsDocument = gql`
+    query getCategoriesSlugs {
   categories {
+    slug
+  }
+}
+    `;
+
+/**
+ * __useGetCategoriesSlugsQuery__
+ *
+ * To run a query within a React component, call `useGetCategoriesSlugsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetCategoriesSlugsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetCategoriesSlugsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetCategoriesSlugsQuery(baseOptions?: Apollo.QueryHookOptions<GetCategoriesSlugsQuery, GetCategoriesSlugsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetCategoriesSlugsQuery, GetCategoriesSlugsQueryVariables>(GetCategoriesSlugsDocument, options);
+      }
+export function useGetCategoriesSlugsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCategoriesSlugsQuery, GetCategoriesSlugsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetCategoriesSlugsQuery, GetCategoriesSlugsQueryVariables>(GetCategoriesSlugsDocument, options);
+        }
+export type GetCategoriesSlugsQueryHookResult = ReturnType<typeof useGetCategoriesSlugsQuery>;
+export type GetCategoriesSlugsLazyQueryHookResult = ReturnType<typeof useGetCategoriesSlugsLazyQuery>;
+export type GetCategoriesSlugsQueryResult = Apollo.QueryResult<GetCategoriesSlugsQuery, GetCategoriesSlugsQueryVariables>;
+export const GetCategoryNameBySlugDocument = gql`
+    query getCategoryNameBySlug($categorySlug: String) {
+  category(where: {slug: $categorySlug}) {
     name
-    slug
   }
 }
     `;
 
 /**
- * __useGetCategoriesQuery__
+ * __useGetCategoryNameBySlugQuery__
  *
- * To run a query within a React component, call `useGetCategoriesQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetCategoriesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetCategoryNameBySlugQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetCategoryNameBySlugQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetCategoriesQuery({
+ * const { data, loading, error } = useGetCategoryNameBySlugQuery({
  *   variables: {
+ *      categorySlug: // value for 'categorySlug'
  *   },
  * });
  */
-export function useGetCategoriesQuery(baseOptions?: Apollo.QueryHookOptions<GetCategoriesQuery, GetCategoriesQueryVariables>) {
+export function useGetCategoryNameBySlugQuery(baseOptions?: Apollo.QueryHookOptions<GetCategoryNameBySlugQuery, GetCategoryNameBySlugQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetCategoriesQuery, GetCategoriesQueryVariables>(GetCategoriesDocument, options);
+        return Apollo.useQuery<GetCategoryNameBySlugQuery, GetCategoryNameBySlugQueryVariables>(GetCategoryNameBySlugDocument, options);
       }
-export function useGetCategoriesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCategoriesQuery, GetCategoriesQueryVariables>) {
+export function useGetCategoryNameBySlugLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCategoryNameBySlugQuery, GetCategoryNameBySlugQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetCategoriesQuery, GetCategoriesQueryVariables>(GetCategoriesDocument, options);
+          return Apollo.useLazyQuery<GetCategoryNameBySlugQuery, GetCategoryNameBySlugQueryVariables>(GetCategoryNameBySlugDocument, options);
         }
-export type GetCategoriesQueryHookResult = ReturnType<typeof useGetCategoriesQuery>;
-export type GetCategoriesLazyQueryHookResult = ReturnType<typeof useGetCategoriesLazyQuery>;
-export type GetCategoriesQueryResult = Apollo.QueryResult<GetCategoriesQuery, GetCategoriesQueryVariables>;
-export const GetCategoriesPathsDocument = gql`
-    query getCategoriesPaths {
-  categories(stage: PUBLISHED) {
-    slug
-  }
-}
-    `;
-
-/**
- * __useGetCategoriesPathsQuery__
- *
- * To run a query within a React component, call `useGetCategoriesPathsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetCategoriesPathsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetCategoriesPathsQuery({
- *   variables: {
- *   },
- * });
- */
-export function useGetCategoriesPathsQuery(baseOptions?: Apollo.QueryHookOptions<GetCategoriesPathsQuery, GetCategoriesPathsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetCategoriesPathsQuery, GetCategoriesPathsQueryVariables>(GetCategoriesPathsDocument, options);
-      }
-export function useGetCategoriesPathsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCategoriesPathsQuery, GetCategoriesPathsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetCategoriesPathsQuery, GetCategoriesPathsQueryVariables>(GetCategoriesPathsDocument, options);
-        }
-export type GetCategoriesPathsQueryHookResult = ReturnType<typeof useGetCategoriesPathsQuery>;
-export type GetCategoriesPathsLazyQueryHookResult = ReturnType<typeof useGetCategoriesPathsLazyQuery>;
-export type GetCategoriesPathsQueryResult = Apollo.QueryResult<GetCategoriesPathsQuery, GetCategoriesPathsQueryVariables>;
+export type GetCategoryNameBySlugQueryHookResult = ReturnType<typeof useGetCategoryNameBySlugQuery>;
+export type GetCategoryNameBySlugLazyQueryHookResult = ReturnType<typeof useGetCategoryNameBySlugLazyQuery>;
+export type GetCategoryNameBySlugQueryResult = Apollo.QueryResult<GetCategoryNameBySlugQuery, GetCategoryNameBySlugQueryVariables>;
