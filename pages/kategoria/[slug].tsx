@@ -13,13 +13,12 @@ import { Section } from "../../components/Section";
 import { Header } from "../../components/Header";
 import { ArticlesList } from "../../components/ArticlesList";
 
-const CategoryArchive = ({
-  articles,
-  categoryName,
-}: {
+type CategoryArchiveProps = {
   articles: ArticleFragment[];
   categoryName: string;
-}) => {
+};
+
+const CategoryArchive = ({ articles, categoryName }: CategoryArchiveProps) => {
   return (
     <Layout>
       <main>

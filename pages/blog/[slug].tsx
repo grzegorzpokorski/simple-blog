@@ -15,7 +15,11 @@ import { Header } from "../../components/Header";
 import { Section } from "../../components/Section";
 import { Layout } from "../../components/Layout";
 
-const BlogPage = ({ article }: { article: SingleArticleFragment }) => {
+type BlogPageProps = {
+  article: SingleArticleFragment;
+};
+
+const BlogPage = ({ article }: BlogPageProps) => {
   return (
     <Layout>
       <Section className="mt-16">
