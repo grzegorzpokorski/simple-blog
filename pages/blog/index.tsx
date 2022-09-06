@@ -11,6 +11,7 @@ import {
   ArticleFragment,
   GetCategoriesDocument,
   GetCategoriesQuery,
+  useGetArticlesQuery,
 } from "../../generated/graphql";
 
 type BlogProps = {
@@ -47,11 +48,13 @@ const Blog = ({ articles, categories }: BlogProps) => {
 export default Blog;
 
 export const getStaticProps = async () => {
-  const articlesResult: GetArticlesQuery = (
-    await client.query({
-      query: GetArticlesDocument,
-    })
-  ).data;
+  // const articlesResult: GetArticlesQuery = (
+  //   await client.query({
+  //     query: GetArticlesDocument,
+  //   })
+  // ).data;
+
+  const { data } = useGetArticlesQuery();
 
   const categoriesResult: GetCategoriesQuery = (
     await client.query({
@@ -61,7 +64,7 @@ export const getStaticProps = async () => {
 
   return {
     props: {
-      articles: articlesResult.articles,
+      articles: data?.articles,
       categories: categoriesResult.categories,
     },
   };
